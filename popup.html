@@ -38,18 +38,62 @@
       </div>
     </div>
 
-    <!-- Modal for adding/editing session -->
+    <!-- Modal clear current session -->
     <div
       class="modal fade"
-      id="sessionModal"
+      id="clearCurrentSessionModal"
       tabindex="-1"
-      aria-labelledby="sessionModalLabel"
+      aria-labelledby="clearCurrentSessionModalLabel"
       aria-hidden="true"
     >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="sessionModalLabel">
+            <h5 class="modal-title" id="clearCurrentSessionModalLabel">
+              Clear Current Session
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to clear the current session?</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              id="clear-current-session"
+              class="btn btn-danger"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for adding/editing session -->
+    <div
+      class="modal fade"
+      id="newEditSessionModal"
+      tabindex="-1"
+      aria-labelledby="newEditSessionModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="newEditSessionModalLabel">
               Create/Edit Session
             </h5>
             <button

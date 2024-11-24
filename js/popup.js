@@ -11,26 +11,30 @@ document.addEventListener("DOMContentLoaded", async () => {
   let thisSiteDomain = await getCurrentSiteDomain();
   let sessionListData = [];
 
-  const sessionList = document.getElementById("session-list");
-  const clearSessionButton = document.getElementById("clear-session");
-  const addSessionButton = document.getElementById("add-session");
-  const sessionModal = new bootstrap.Modal(
-    document.getElementById("sessionModal")
+  const newEditSessionModal = new bootstrap.Modal(
+    document.getElementById("newEditSessionModal")
   );
   const deleteSessionModal = new bootstrap.Modal(
     document.getElementById("deleteSessionModal")
   );
-  const deleteSessionIdInput = document.getElementById("delete-session-id");
-  const deleteSessionButton = document.getElementById("delete-session");
-  const saveSessionButton = document.getElementById("save-session");
-  const saveSessionKeepButton = document.getElementById("save-session-keep");
-  const sessionNameInput = document.getElementById("session-name");
-  const saveCookiesCheckbox = document.getElementById("save-cookies");
-  const saveLocalStorageCheckbox =
-    document.getElementById("save-local-storage");
-  const saveSessionStorageCheckbox = document.getElementById(
-    "save-session-storage"
+  const clearCurrentSessionModal = new bootstrap.Modal(
+    document.getElementById("clearCurrentSessionModal")
   );
+
+  const sessionList = document.getElementById("session-list");
+  const inpDeleteSessionId = document.getElementById("delete-session-id");
+  const inpSessionName = document.getElementById("session-name");
+  const btnClearCurrentSession = document.getElementById("clear-session");
+  const btnAddSession = document.getElementById("add-session");
+  const btnDeleteSession = document.getElementById("delete-session");
+  const btnSaveSession = document.getElementById("save-session");
+  const btnSaveSessionKeep = document.getElementById("save-session-keep");
+  const btnSubmitClearCurrentSession = document.getElementById(
+    "clear-current-session"
+  );
+  const chbSaveCookies = document.getElementById("save-cookies");
+  const chbSaveLocalStorage = document.getElementById("save-local-storage");
+  const chbSaveSessionStorage = document.getElementById("save-session-storage");
 
   let editingSessionId = null;
 
@@ -173,8 +177,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Save session
   async function saveSession() {
-    const isKeep = this.id === saveSessionKeepButton.id;
-    const name = sessionNameInput.value.trim();
+    const isKeep = this.id === btnSaveSessionKeep.id;
+    const name = inpSessionName.value.trim();
     if (!name) {
       alert("Please enter a name for the session");
       return;
@@ -183,18 +187,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     const sessions =
       (await chrome.storage.local.get(["sessions"])).sessions || [];
     const storageData = await getCurrentStorage();
-    const cookies = saveCookiesCheckbox.checked
-      ? await getCurrentCookies()
-      : null;
+    const cookies = chbSaveCookies.checked ? await getCurrentCookies() : null;
 
     const newSession = {
       site: thisSiteDomain,
       name,
       saveCookies: cookies,
-      saveLocalStorage: saveLocalStorageCheckbox.checked
+      saveLocalStorage: chbSaveLocalStorage.checked
         ? storageData.localStorage
         : null,
-      saveSessionStorage: saveSessionStorageCheckbox.checked
+      saveSessionStorage: chbSaveSessionStorage.checked
         ? storageData.sessionStorage
         : null
     };
@@ -210,7 +212,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     chrome.storage.local.set({ sessions }, () => {
-      sessionModal.hide();
+      newEditSessionModal.hide();
       loadSessions();
       if (editingSessionId === null && !isKeep) {
         chrome.tabs.reload();
@@ -218,26 +220,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Event: Clear site storage
-  clearSessionButton.addEventListener("click", async () => {
-    await clearSiteStorage();
-    await setCookiesForCurrentTab([]);
-    chrome.tabs.reload();
+  btnClearCurrentSession.addEventListener("click", async (e) => {
+    clearCurrentSessionModal.show();
   });
 
   // Event: Add session
-  addSessionButton.addEventListener("click", () => {
+  btnAddSession.addEventListener("click", () => {
     editingSessionId = null;
-    sessionNameInput.value = "";
-    saveCookiesCheckbox.checked = true;
-    saveLocalStorageCheckbox.checked = true;
-    saveSessionStorageCheckbox.checked = true;
-    sessionModal.show();
+    inpSessionName.value = "";
+    chbSaveCookies.checked = true;
+    chbSaveLocalStorage.checked = true;
+    chbSaveSessionStorage.checked = true;
+    newEditSessionModal.show();
   });
 
   // Event: Save session
-  saveSessionButton.addEventListener("click", saveSession);
-  saveSessionKeepButton.addEventListener("click", saveSession);
+  btnSaveSession.addEventListener("click", saveSession);
+  btnSaveSessionKeep.addEventListener("click", saveSession);
+  btnSubmitClearCurrentSession.addEventListener("click", async function () {
+    await clearSiteStorage();
+    await setCookiesForCurrentTab([]);
+    chrome.tabs.reload();
+    clearCurrentSessionModal.hide();
+  });
 
   // Event: Handle session actions
   sessionList.addEventListener("click", async (e) => {
@@ -250,7 +255,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (session.saveCookies)
         await setCookiesForCurrentTab(session.saveCookies);
 
-      console.log(session);
       chrome.tabs.sendMessage(tabs[0].id, {
         action: "activate",
         session
@@ -258,17 +262,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else if (target.classList.contains("edit")) {
       const session = sessionListData[index];
       editingSessionId = index;
-      sessionNameInput.value = session.name;
-      sessionModal.show();
+      inpSessionName.value = session.name;
+      newEditSessionModal.show();
     } else if (target.classList.contains("delete")) {
-      deleteSessionIdInput.value = index;
+      inpDeleteSessionId.value = index;
       deleteSessionModal.show();
     }
   });
 
   // Event: Delete session
-  deleteSessionButton.addEventListener("click", () => {
-    const index = parseInt(deleteSessionIdInput.value);
+  btnDeleteSession.addEventListener("click", () => {
+    const index = parseInt(inpDeleteSessionId.value);
     sessionListData.splice(index, 1);
     chrome.storage.local.set({ sessions: sessionListData }, loadSessions);
     deleteSessionModal.hide();
