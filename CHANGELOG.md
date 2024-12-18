@@ -4,6 +4,7 @@
 - Add auto sync local storage feature (helps maintain local storage data)
 - Add auto sync session storage feature (helps maintain session storage data)
 - Add export/import data feature to easily transfer data between machines
+- Support drag and drop items in the list of sessions to rearrange the order
 
 ## v1.1
 ### 🚀 Features
