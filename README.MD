@@ -1,5 +1,5 @@
 <h1 align="center">
-	<img src="./images/icon-512.png" width="23rem"> Session Manager Extension
+	<img src="./icons/icon-512.png" width="23rem"> Session Manager Extension
 </h1>
 
 ## 👁️ Overview
@@ -20,10 +20,25 @@ The **Session Manager** extension helps users manage browser session data effect
 
 ## 📸 Screenshots
 ### List Sessions Saved
-![List Sessions Saved](/screenshots/list-sessions-saved.png)
+- **Empty List**
 
-### Create or Update Session
-![Create or Update Session](/screenshots/create-or-update-session.png)
+	<img src="./screenshots/empty-list-sessions.png" width="400" alt="List Sessions Saved">
+
+- **Sessions Saved**
+
+	<img src="./screenshots/list-sessions-saved.png" width="400" alt="List Sessions Saved">
+
+### Create or Update Session	
+- <img src="./screenshots/create-or-update-session.png" width="400" alt="Create or Update Session">
+
+### Export or Import Sessions Data
+- **Export Sessions**
+	
+	<img src="./screenshots/export-data.png" width="400" alt="Export Sessions">
+
+- **Import Sessions**
+  
+	<img src="./screenshots/import-data.png" width="400" alt="Import Sessions">
 
 ## 📖 How to use
 1. Click the **Session Manager** icon in the browser toolbar to open the popup.
@@ -53,11 +68,10 @@ The extension requires the following permissions:
 
 ## 📝 Author
 **NTKhang**  
-Version: `1.0`  
-Description: Manage sessions to switch accounts quickly.
+**Description**: Manage sessions to switch accounts quickly.
 
 ## 📄 License
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](/LICENSE) file for details.
 
 ## 🙏 Acknowledgments
-Thank you for using the **Session Manager Extension**. If you have any questions or feedback, please open an issue on GitHub.
+Thank you for using the **Session Manager Extension**. If you have any questions or feedback, please open an issue on [GitHub](https://github.com/ntkhang03/SessionManagerExtension/issues)
