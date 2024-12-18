@@ -1,0 +1,43 @@
+.icon {
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	background-repeat: no-repeat;
+	background-size: contain;
+}
+
+.grip-dots-vertical {
+	background-image: url('../svgs/grip-dots-vertical.svg');
+}
+
+.form-check-input {
+	border: 1px solid #6c6c6c;
+}
+
+.fade-in {
+	animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+.fade-out {
+	animation: fadeOut 0.5s ease-in-out;
+}
+
+@keyframes fadeOut {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
+}
