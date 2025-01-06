@@ -7,7 +7,10 @@ The **Session Manager** extension helps users manage browser session data effect
 
 ## 🚀 Features
 - Save current session data (Cookies, Local Storage, Session Storage).
-- Restore session data to quickly switch accounts.
+- Auto sync cookies, local storage, and session storage.
+- Export and import session data for backup.
+- Manage multiple sessions for different accounts.
+- Activate a session to restore data for quick login.
 - Edit and delete saved sessions.
 - Clear current session data for a fresh start.
 

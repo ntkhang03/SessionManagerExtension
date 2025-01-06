@@ -1,26 +1,32 @@
 // Get message from content.js
+injectModifyStorage();
+
 if (!chrome.runtime || !chrome.runtime.onMessage) {
   console.error("chrome.runtime.onMessage is not supported");
 }
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (
-    [
-      "stopSyncLocalStorage",
-      "stopSyncSessionStorage",
-      "stopSyncCookies",
-      "stopAllSync",
-      "startSyncLocalStorage",
-      "startSyncSessionStorage",
-      "startSyncCookies",
-      "stopAllSync",
-      "checkAndStartSync"
-    ].includes(message.action)
-  ) {
-    // Send message to injected script (web page)
-    window.postMessage(message, "*");
-  }
-});
+try {
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (
+      [
+        "stopSyncLocalStorage",
+        "stopSyncSessionStorage",
+        "stopSyncCookies",
+        "stopAllSync",
+        "startSyncLocalStorage",
+        "startSyncSessionStorage",
+        "startSyncCookies",
+        "stopAllSync",
+        "checkAndStartSync"
+      ].includes(message.action)
+    ) {
+      // Send message to injected script (web page)
+      window.postMessage(message, "*");
+    }
+  });
+} catch (error) {
+  console.error("Failed to add message listener", error);
+}
 
 // Get message from injected script (web page)
 window.addEventListener("message", async (event) => {
@@ -46,8 +52,6 @@ window.addEventListener("message", async (event) => {
     event.data.syncId
   );
 });
-
-injectModifyStorage();
 
 function injectModifyStorage() {
   const script = document.createElement("script");

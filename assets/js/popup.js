@@ -78,7 +78,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const inpPasswordHint = document.getElementById("inp-password-hint");
 
   const pDeleteSessionName = document.getElementById("p-delete-session-name");
-  const pDeleteSelectedSessions = document.getElementById("p-delete-selected-sessions");
+  const pDeleteSelectedSessions = document.getElementById(
+    "p-delete-selected-sessions"
+  );
 
   const newEditSessionModalLabel = document.getElementById(
     "new-edit-session-modal-label"
@@ -91,18 +93,30 @@ document.addEventListener("DOMContentLoaded", async () => {
   const btnSubmitDeleteSelectedSessions = document.getElementById(
     "btn-submit-delete-selected-sessions"
   );
-  const btnClearCurrentSession = document.getElementById("btn-clear-current-session");
-  const btnSaveCurrentSession = document.getElementById("btn-save-current-session");
-  const btnSubmitDeleteSession = document.getElementById("btn-submit-delete-session");
-  const btnSubmitSaveSession = document.getElementById("btn-submit-save-session");
+  const btnClearCurrentSession = document.getElementById(
+    "btn-clear-current-session"
+  );
+  const btnSaveCurrentSession = document.getElementById(
+    "btn-save-current-session"
+  );
+  const btnSubmitDeleteSession = document.getElementById(
+    "btn-submit-delete-session"
+  );
+  const btnSubmitSaveSession = document.getElementById(
+    "btn-submit-save-session"
+  );
   const btnSubmitSaveSessionKeep = document.getElementById(
     "btn-submit-save-session-keep"
   );
   const btnSubmitClearCurrentSession = document.getElementById(
     "btn-submit-clear-current-session"
   );
-  const btnOpenModalExportData = document.getElementById("btn-open-modal-export-data");
-  const btnOpenModalImportData = document.getElementById("btn-open-modal-import-data");
+  const btnOpenModalExportData = document.getElementById(
+    "btn-open-modal-export-data"
+  );
+  const btnOpenModalImportData = document.getElementById(
+    "btn-open-modal-import-data"
+  );
   const btnExportData = document.getElementById("btn-export-data");
   const btnImportData = document.getElementById("btn-import-data");
 
@@ -111,9 +125,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   const chkSelectAll = document.getElementById("chk-select-all");
   const chkSaveCookies = document.getElementById("chk-save-cookies");
   const chkSaveLocalStorage = document.getElementById("chk-save-local-storage");
-  const chkSaveSessionStorage = document.getElementById("chk-save-session-storage");
+  const chkSaveSessionStorage = document.getElementById(
+    "chk-save-session-storage"
+  );
   const chkAutoSyncCookies = document.getElementById("chk-auto-sync-cookies");
-  const chkAutoSyncLocalStorage = document.getElementById("chk-auto-sync-local-storage");
+  const chkAutoSyncLocalStorage = document.getElementById(
+    "chk-auto-sync-local-storage"
+  );
   const chkAutoSyncSessionStorage = document.getElementById(
     "chk-auto-sync-session-storage"
   );
@@ -230,17 +248,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.querySelectorAll(".modal").forEach(setupModalEventListeners);
 
   // when reload success, enable all activate buttons
-  chrome.tabs.onUpdated.addListener(function () {
-    renderSessionList();
+  chrome.tabs.onUpdated.addListener(async function (e) {
+    // tab "<name>" is reloaded
+    const tabId = e.toString();
+    chrome.tabs.get(parseInt(tabId), async function (tab) {
+      if (tab.url === currentTab.url) {
+        renderSessionList();
+      }
+    });
   });
 
   // ================== UTILITY FUNCTIONS ================== //
   // Render session list
   async function renderSessionList() {
-		console.log(thisSiteDomain);
-		console.log(await getSessionData());
     const sessions = await getSessionDataOfDomain(thisSiteDomain);
-		console.log(sessions);
     const storageData = await getCurrentStorage();
     divSessionList.innerHTML = "";
     if (sessions.length === 0) {
@@ -261,6 +282,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       sessionItem.className =
         "list-group-item d-flex justify-content-between align-items-center";
 
+      const isActivated =
+        storageData?.localStorage?.["SESSION_MANAGER__USE_SESSION_INDEX"] ===
+        index.toString();
       sessionItem.draggable = true;
       sessionItem.innerHTML = `
 				<div class="d-flex align-items-center form-check">
@@ -268,9 +292,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 					<label for="select-session-${index}" class="form-check-label me-2">${session.name}</label>
 				</div>
 				<div>
-					<button class="btn btn-success btn-sm me-2 activate" data-index="${index}">
-						<i class="fa fa-check"></i>
-						${storageData?.localStorage?.["SESSION_MANAGER__USE_SESSION_INDEX"] === index.toString() ? "Activated" : "Activate"}
+					<button class="btn btn-success btn-sm me-2 activate" data-index="${index}" ${isActivated ? "disabled" : ""}>
+						<i class="fa ${isActivated ? "fa-check" : "fa-play me-1"}"></i>
+						${isActivated ? "Activated" : "Activate"}
 					</button>
 					<button class="btn btn-warning btn-sm me-2 edit" data-index="${index}">
 						<i class="fa fa-edit"></i>
@@ -379,8 +403,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     autoSyncOptions.syncId = syncId;
 
+    // get all tabs of this site (include subdomains)
+    const query = `*://*.${editingSessionIndex !== null ? sessionEdit.site : thisSiteDomain}/*`;
     const tabs = await chrome.tabs.query({
-      url: `*://${editingSessionIndex !== null ? sessionEdit.site : thisSiteDomain}/*`
+      url: query
     });
 
     tabs.forEach((tab) => {
@@ -468,7 +494,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
 
-		console.log(sessionDataThisSite);
     await setSessionDataForDomain(thisSiteDomain, sessionDataThisSite);
     bsModalNewEditSession.hide();
     renderSessionList();

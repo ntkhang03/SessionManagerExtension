@@ -1,3 +1,7 @@
+## v1.3
+### 🚀 Features
+
+
 ## v1.2
 ### 🚀 Features
 - Add auto sync cookies feature (helps maintain the lifetime of cookies)
